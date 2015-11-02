@@ -1,0 +1,4 @@
+FastCgiExternalServer /var/lib/apache2/fastcgi/php5-fastcgi -socket /var/run/default.sock -idle-timeout 610
+Alias /php5-fastcgi     /var/lib/apache2/fastcgi/php5-fastcgi
+AddHandler      php-script      .php
+Action  php-script      /php5-fastcgi   virtual

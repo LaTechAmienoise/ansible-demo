@@ -1,0 +1,21 @@
+---
+- name: Package debconf-utils
+  apt: state=latest pkg=debconf-utils
+- name: Is mysql-server preseeded?
+  shell: debconf-get-selections | grep '^mysql-server-5'
+  ignore_errors: true
+  register: debconf_mysql
+- name: Copy mysql debconf templates
+  template: src=mysql-debconf.j2 dest=/var/tmp/mysql.debconf mode=0600 owner=root group=root
+  when: debconf_mysql.rc > 0
+- name: Import mysql debconf templates
+  shell: debconf-set-selections /var/tmp/mysql.debconf
+  when: debconf_mysql.rc > 0
+- name: Install mysql-server (Warning, this operation may take some few minutes)
+  apt: state=latest pkg=mysql-server-5.5 force=yes
+- name: Ensure python-mysqldb
+  apt: state=latest pkg=python-mysqldb
+- name: Remove mysql debconf templates
+  file: path=/var/tmp/mysql.debconf state=absent
+- name: create ~root/.my.cnf
+  template: src=my.cnf.j2 dest=/root/.my.cnf mode=0400 owner=root group=root

@@ -1,0 +1,14 @@
+- name: Ensure apt-source
+  template: src=sources.list dest=/etc/apt/sources.list owner=root group=root mode=0644
+  register: source_list
+- name: Execute apt-get when sources.list changed
+  shell: apt-get -f update
+  when: source_list.changed
+- name: Ensure apt-get is updated
+  apt: update_cache=yes
+- name: Ensure required base packages
+  apt: pkg={{ item }} state=present
+  with_items:
+    - screen
+    - git
+    - telnet

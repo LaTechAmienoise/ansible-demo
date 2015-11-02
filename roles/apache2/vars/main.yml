@@ -1,0 +1,3 @@
+fpm_pool_name: default
+fpm_pool_user: www-data
+fpm_pool_group: www-data
