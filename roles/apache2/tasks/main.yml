@@ -3,11 +3,6 @@
 - name: Ensure dotdeb sources.lists
   template: src=dotdeb.list dest=/etc/apt/sources.list.d/dotdeb.list
   register: dotdeb_sourcelist
-  when: ansible_distribution_release == "wheezy"
-- name: Disable dotdeb for jessie
-  file: path=/etc/apt/sources.list.d/dotdeb.list state=absent
-  when: ansible_distribution_release == "jessie"
-  register: dotdeb_sourcelist
 - name: apt-update
   shell: apt-get update
   when: dotdeb_sourcelist.changed

@@ -1,0 +1,19 @@
+- name: Ensure latest version of wordpress
+  git: repo=https://github.com/wordpress/wordpress dest=/var/www/wordpress
+  tags: wordpress
+- name: Ensure wordpress database
+  mysql_db: name=wordpress state=present login_user=root login_password={{ mysql_root_password }}
+  tags: wordpress
+- name: Ensure wordpress user
+  mysql_user: name=wordpress state=present login_user=root login_password={{ mysql_root_password }} password={{ mysql_wordpress_password }} priv="wordpress.*:ALL"
+  tags: wordpress
+- name: Ensure wordpress config
+  template: src=wp-config.php dest=/var/www/wordpress/wp-config.php owner=root group=root mode=0644  
+  tags: wordpress
+- name: Ensure wordpress writable directories
+  file: path=/var/www/wordpress/wp-content/{{ item }} state=directory owner=www-data group=www-data mode=0755
+  with_items:
+    - uploads
+    - plugins
+    - themes
+  tags: wordpress
